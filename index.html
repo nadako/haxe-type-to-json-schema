@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id='editor_holder'></div>
+<button id='submit'>Submit (console.log)</button>
+<script src="jsoneditor.min.js"></script>
+<script src="main.js"></script>
+<script>
+  var editor = new JSONEditor(document.getElementById('editor_holder'),{schema: getSchema()});
+  document.getElementById('submit').addEventListener('click',function() {
+    console.log(editor.getValue());
+  });
+</script>
+</body>
+</html>
