@@ -1,4 +1,5 @@
 typedef MyType = {
+    /** some doc **/
     var name:String;
 }
 

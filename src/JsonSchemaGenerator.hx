@@ -48,6 +48,8 @@ class JsonSchemaGenerator {
                     var f = anon.fields[i];
                     var schema = genSchema(f.type, f.pos);
                     schema.propertyOrder = i;
+                    if (f.doc != null)
+                        schema.description = f.doc;
                     props[f.name] = schema;
                     if (!f.meta.has(":optional"))
                         required.push(f.name);
