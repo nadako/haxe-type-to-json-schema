@@ -6,6 +6,8 @@ typedef MyType = {
         Field doc
     **/
     var name:String;
+
+    var f:MyType;
 }
 
 class Main {

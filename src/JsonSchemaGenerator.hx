@@ -1,4 +1,5 @@
 #if macro
+import haxe.DynamicAccess;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type;
@@ -13,19 +14,26 @@ private typedef StructInfo = {
 
 class JsonSchemaGenerator {
     public static macro function generate(type) {
-        var schema = genSchema(Context.getType(type.toString()), type.pos, null);
+        var refs = new DynamicAccess();
+        var schema = genSchema(Context.getType(type.toString()), type.pos, null, refs);
+        schema.definitions = refs;
         return macro $v{schema};
     }
 
     #if macro
-    static function genSchema(type:Type, pos:Position, structInfo:Null<StructInfo>):JsonSchema {
+    static function genSchema(type:Type, pos:Position, structInfo:Null<StructInfo>, refs:DynamicAccess<JsonSchema>):JsonSchema {
         switch (type) {
             case TType(_.get() => dt, params):
                 return switch [dt, params] {
                     case [{pack: [], name: "Null"}, [realT]]:
-                        genSchema(realT, pos, null);
+                        genSchema(realT, pos, null, refs);
                     default:
-                        genSchema(dt.type.applyTypeParameters(dt.params, params), dt.pos, {name: dt.name, doc: dt.doc});
+                        if (!refs.exists(dt.name)) {
+                            refs[dt.name] = null;
+                            var schema = genSchema(dt.type.applyTypeParameters(dt.params, params), dt.pos, {name: dt.name, doc: dt.doc}, refs);
+                            refs[dt.name] = schema;
+                        }
+                        return {"@$__hx__$ref": '#/definitions/${dt.name}'};
                 }
 
             case TInst(_.get() => cl, params):
@@ -35,7 +43,7 @@ class JsonSchemaGenerator {
                     case [{pack: [], name: "Array"}, [elemType]]:
                         return {
                             type: "array",
-                            items: genSchema(elemType, pos, null)
+                            items: genSchema(elemType, pos, null, refs)
                         };
                     default:
                 }
@@ -52,7 +60,7 @@ class JsonSchemaGenerator {
                 }
 
             case TAnonymous(_.get() => anon):
-                var props = new haxe.DynamicAccess();
+                var props = new DynamicAccess();
                 var required = [];
 
                 // sort by declaration position
@@ -60,7 +68,7 @@ class JsonSchemaGenerator {
 
                 for (i in 0...anon.fields.length) {
                     var f = anon.fields[i];
-                    var schema = genSchema(f.type, f.pos, null);
+                    var schema = genSchema(f.type, f.pos, null, refs);
                     schema.propertyOrder = i;
                     if (f.doc != null)
                         schema.description = f.doc.trim();
