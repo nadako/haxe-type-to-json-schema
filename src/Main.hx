@@ -1,5 +1,10 @@
+/**
+    Type doc
+**/
 typedef MyType = {
-    /** some doc **/
+    /**
+        Field doc
+    **/
     var name:String;
 }
 
