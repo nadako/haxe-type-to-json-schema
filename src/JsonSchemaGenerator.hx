@@ -16,6 +16,7 @@ class JsonSchemaGenerator {
     public static macro function generate(type) {
         var refs = new DynamicAccess();
         var schema = genSchema(Context.getType(type.toString()), type.pos, null, refs);
+        Reflect.setField(schema, "@$__hx__$schema", "http://json-schema.org/draft-04/schema#");
         schema.definitions = refs;
         return macro $v{schema};
     }
