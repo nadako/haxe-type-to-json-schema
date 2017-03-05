@@ -1,14 +1,10 @@
-typedef MapItemDef = {
-    name:String,
-    buyable:Bool,
-    ?goldMultiplier:Float,
-    baseCapacity:Int,
-    levels:Array<{upgradeCost:Int, bonusCapacity:Int}>,
+typedef MyType = {
+    var name:String;
 }
 
 class Main {
-    @:expose("getSchema")
-    static function getSchema() {
-        return JsonSchemaGenerator.generate(MapItemDef);
+    static function main() {
+        var schema = JsonSchemaGenerator.generate(MyType);
+        sys.io.File.saveContent("schema.json", haxe.Json.stringify(schema, "  "));
     }
 }

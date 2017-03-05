@@ -1,4 +1,3 @@
--cp src
-Main
--js bin/main.js
--D analyzer-optimize
+build-each.hxml
+-main Main
+-neko bin/main.n

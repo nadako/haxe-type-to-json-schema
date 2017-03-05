@@ -1,0 +1,3 @@
+build-each.hxml
+-js bin/demo.js
+Demo
