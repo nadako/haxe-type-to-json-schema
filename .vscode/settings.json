@@ -1,5 +1,8 @@
 {
     "haxe.displayConfigurations": [
         ["build.hxml"]
-    ]
+    ],
+    "[haxe]": {
+        "editor.formatOnSave": true
+    }
 }
